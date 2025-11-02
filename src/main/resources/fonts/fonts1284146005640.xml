@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="fontBean128414600565620183" class="net.sf.jasperreports.engine.fonts.SimpleFontFamily">
+        <property name="name" value="Noto Sans SC"/>
+        <property name="normal" value="fonts/NotoSansSC.ttf"/>
+        <property name="pdfEmbedded" value="true"/>
+        <property name="pdfEncoding" value="Identity-H"/>
+        <property name="normalPdfFont" value="fonts/NotoSerifSC.ttf" />
+    </bean>
+    <bean id="fontBean128414600565620184" class="net.sf.jasperreports.engine.fonts.SimpleFontFamily">
+        <property name="name" value="Noto Serif SC"/>
+        <property name="normal" value="fonts/NotoSerifSC.ttf"/>
+        <property name="pdfEmbedded" value="true"/>
+        <property name="pdfEncoding" value="Identity-H"/>
+    </bean>
+</beans>

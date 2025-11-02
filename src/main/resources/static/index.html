@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF预览服务器测试工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .input-section {
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 300px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            resize: vertical;
+        }
+        .button-group {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #download-btn {
+            background-color: #2196F3;
+        }
+        #download-btn:hover {
+            background-color: #0b7dda;
+        }
+        .result-section {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            min-height: 400px;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            min-height: 500px;
+        }
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e9e9e9;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PDF预览服务器测试工具</h1>
+        
+        <div class="input-section">
+            <h3>JRXML 内容</h3>
+            <textarea id="jrxml-content" placeholder="请粘贴JRXML内容..."></textarea>
+        </div>
+        
+        <div class="button-group">
+            <button id="load-sample-btn">加载示例JRXML</button>
+            <button id="generate-btn">生成PDF</button>
+            <button id="download-btn" disabled>下载PDF</button>
+        </div>
+        
+        <div class="status" id="status">准备就绪</div>
+        
+        <div class="result-section">
+            <h3>PDF预览</h3>
+            <iframe id="pdf-preview"></iframe>
+        </div>
+    </div>
+    
+    <script>
+        const sampleJrxml = `<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 9.0.0.final using JasperReports Library version 6.21.0-4f56c4f36cd19e17675219a9ac4692d5f0f13b06  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TrafficJobNormal" pageWidth="606" pageHeight="396" orientation="Landscape" columnWidth="566" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c8b715cb-26fb-43dc-ae25-58d255c6099d">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NO_DATA_ADAPTER"/>
+	<parameter name="REPORT_TIME" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[]]>
+	</queryString>
+	<field name="trafficNo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="traffic_no"/>
+		<property name="com.jaspersoft.studio.field.label" value="traffic_no"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<field name="createTime" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="create_time"/>
+		<property name="com.jaspersoft.studio.field.label" value="create_time"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<field name="proposeStartTime" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="propose_start_time"/>
+		<property name="com.jaspersoft.studio.field.label" value="propose_start_time"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<field name="applyOrgName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="apply_org_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="apply_org_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<field name="applyUserName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="apply_user_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="apply_user_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<field name="applyUserPhone" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="apply_user_phone"/>
+		<property name="com.jaspersoft.studio.field.label" value="apply_user_phone"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<field name="fallbackContactUserName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="apply_fallback_user_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="apply_fallback_user_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<field name="fallbackContactUserPhone" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="apply_fallback_user_phone"/>
+		<property name="com.jaspersoft.studio.field.label" value="apply_fallback_user_phone"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<field name="reason" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="reason"/>
+		<property name="com.jaspersoft.studio.field.label" value="reason"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<field name="fromPlace" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="from_place"/>
+		<property name="com.jaspersoft.studio.field.label" value="from_place"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<field name="targetPlace" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="target_place"/>
+		<property name="com.jaspersoft.studio.field.label" value="target_place"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<field name="applyRemark" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="apply_remark"/>
+		<property name="com.jaspersoft.studio.field.label" value="apply_remark"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<field name="vehiclePlateNo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="vehicle_plate_no"/>
+		<property name="com.jaspersoft.studio.field.label" value="vehicle_plate_no"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<field name="customNo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="custom_no"/>
+		<property name="com.jaspersoft.studio.field.label" value="custom_no"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<field name="passengerName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="passenger_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="passenger_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<field name="passengerPhone" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="passenger_phone"/>
+		<property name="com.jaspersoft.studio.field.label" value="passenger_phone"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<field name="driver1Name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="driver1_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="driver1_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<field name="driver1PhoneNumber" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="driver1_phonenumber"/>
+		<property name="com.jaspersoft.studio.field.label" value="driver1_phonenumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<field name="driver2Name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="driver2_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="driver2_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<field name="driver2PhoneNumber" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="driver2_phonenumber"/>
+		<property name="com.jaspersoft.studio.field.label" value="driver2_phonenumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<field name="pricePerKm" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="price_per_km"/>
+		<property name="com.jaspersoft.studio.field.label" value="price_per_km"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<field name="applyVehicleRemark" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="apply_vehicle_remark"/>
+		<property name="com.jaspersoft.studio.field.label" value="apply_vehicle_remark"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="traffic_job_main"/>
+	</field>
+	<detail>
+		<band height="200" splitType="Stretch">
+			<staticText>
+				<reportElement x="20" y="0" width="100" height="20" uuid="c8b715cb-26fb-43dc-ae25-58d255c6099d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Noto Serif SC" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[示例交通报表]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="20" y="20" width="150" height="20" uuid="c8b715cb-26fb-43dc-ae25-58d255c6099d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Noto Serif SC" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["编号: " + $F{trafficNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="20" width="150" height="20" uuid="c8b715cb-26fb-43dc-ae25-58d255c6099d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Noto Serif SC" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["申请时间: " + $F{createTime}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="20" y="60" width="100" height="20" uuid="c8b715cb-26fb-43dc-ae25-58d255c6099d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Noto Serif SC" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[申请人信息]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="80" width="70" height="20" uuid="c8b715cb-26fb-43dc-ae25-58d255c6099d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Noto Serif SC" size="11"/>
+				</textElement>
+				<text><![CDATA[申请单位:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="90" y="80" width="200" height="20" uuid="c8b715cb-26fb-43dc-ae25-58d255c6099d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Noto Serif SC" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{applyOrgName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="310" y="80" width="70" height="20" uuid="c8b715cb-26fb-43dc-ae25-58d255c6099d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Noto Serif SC" size="11"/>
+				</textElement>
+				<text><![CDATA[申请人:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="380" y="80" width="166" height="20" uuid="c8b715cb-26fb-43dc-ae25-58d255c6099d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Noto Serif SC" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{applyUserName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="20" y="100" width="70" height="20" uuid="c8b715cb-26fb-43dc-ae25-58d255c6099d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Noto Serif SC" size="11"/>
+				</textElement>
+				<text><![CDATA[联系电话:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="90" y="100" width="200" height="20" uuid="c8b715cb-26fb-43dc-ae25-58d255c6099d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Noto Serif SC" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{applyUserPhone}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="20" y="120" width="100" height="20" uuid="c8b715cb-26fb-43dc-ae25-58d255c6099d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Noto Serif SC" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[车辆信息]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="20" y="140" width="70" height="20" uuid="c8b715cb-26fb-43dc-ae25-58d255c6099d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Noto Serif SC" size="11"/>
+				</textElement>
+				<text><![CDATA[车牌号:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="90" y="140" width="100" height="20" uuid="c8b715cb-26fb-43dc-ae25-58d255c6099d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Noto Serif SC" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vehiclePlateNo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="210" y="140" width="70" height="20" uuid="c8b715cb-26fb-43dc-ae25-58d255c6099d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Noto Serif SC" size="11"/>
+				</textElement>
+				<text><![CDATA[单价:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="280" y="140" width="70" height="20" uuid="c8b715cb-26fb-43dc-ae25-58d255c6099d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Noto Serif SC" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pricePerKm}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="370" y="140" width="70" height="20" uuid="c8b715cb-26fb-43dc-ae25-58d255c6099d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Noto Serif SC" size="11"/>
+				</textElement>
+				<text><![CDATA[备注:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="440" y="140" width="106" height="20" uuid="c8b715cb-26fb-43dc-ae25-58d255c6099d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Noto Serif SC" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{applyVehicleRemark}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>`;
+        
+
+        
+        let pdfBlob = null;
+        
+        document.getElementById('load-sample-btn').addEventListener('click', () => {
+            document.getElementById('jrxml-content').value = sampleJrxml;
+            updateStatus('已加载示例JRXML内容', 'success');
+        });
+        
+        document.getElementById('generate-btn').addEventListener('click', async () => {
+            const jrxmlContent = document.getElementById('jrxml-content').value.trim();
+            
+            if (!jrxmlContent) {
+                updateStatus('请输入JRXML内容', 'error');
+                return;
+            }
+            
+            updateStatus('正在生成PDF...', '');
+            
+            try {
+                const response = await fetch('http://localhost:8084/api/pdf/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    },
+                    body: jrxmlContent
+                });
+                
+                if (response.ok) {
+                    // 成功生成PDF
+                    pdfBlob = await response.blob();
+                    const pdfUrl = URL.createObjectURL(pdfBlob);
+                    document.getElementById('pdf-preview').src = pdfUrl;
+                    document.getElementById('download-btn').disabled = false;
+                    updateStatus('PDF生成成功！', 'success');
+                } else {
+                    // 检查响应类型是否为JSON
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        const errorData = await response.json();
+                        updateStatus(`生成失败: ${errorData.message || errorData.error}`, 'error');
+                        // 清空预览
+                        document.getElementById('pdf-preview').src = '';
+                        document.getElementById('download-btn').disabled = true;
+                    } else {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                }
+                
+            } catch (error) {
+                updateStatus(`生成失败: ${error.message}`, 'error');
+                console.error('Error generating PDF:', error);
+                // 清空预览
+                document.getElementById('pdf-preview').src = '';
+                document.getElementById('download-btn').disabled = true;
+            }
+        });
+        
+        document.getElementById('download-btn').addEventListener('click', () => {
+            if (pdfBlob) {
+                const url = URL.createObjectURL(pdfBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'generated_report.pdf';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        });
+        
+        function updateStatus(message, type = '') {
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = message;
+            statusElement.className = 'status';
+            if (type) {
+                statusElement.classList.add(type);
+            }
+        }
+    </script>
+</body>
+</html>
