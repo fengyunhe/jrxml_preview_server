@@ -62,7 +62,10 @@
             resize: none;
             padding: 0;
             margin: 0;
-            line-height: 1.5;
+            line-height: 22px; /* 与行号区域保持一致 */
+            white-space: pre; /* 禁用自动换行，保留空白字符 */
+            overflow-x: auto; /* 启用水平滚动 */
+            wrap: off; /* 禁用文本换行 */
         }
         .button-group {
             margin-bottom: 20px;
@@ -162,6 +165,7 @@
             <div class="search-container">
                 <input type="text" id="search-input" class="search-input" placeholder="搜索内容...">
                 <div class="search-buttons">
+                    <button id="search-btn" class="search-btn">搜索</button>
                     <button id="search-prev-btn" class="search-btn">上一个</button>
                     <button id="search-next-btn" class="search-btn">下一个</button>
                     <button id="search-case-btn" class="search-btn">Aa</button>
@@ -479,6 +483,7 @@
         
         // 搜索功能
         const searchInput = document.getElementById('search-input');
+        const searchBtn = document.getElementById('search-btn');
         const searchPrevBtn = document.getElementById('search-prev-btn');
         const searchNextBtn = document.getElementById('search-next-btn');
         const searchCaseBtn = document.getElementById('search-case-btn');
@@ -620,7 +625,7 @@
         function toggleCaseSensitive() {
             caseSensitive = !caseSensitive;
             searchCaseBtn.classList.toggle('active', caseSensitive);
-            performSearch();
+            // 不再自动执行搜索，需要用户手动点击搜索按钮
         }
         
         function escapeRegExp(string) {
@@ -628,9 +633,35 @@
         }
         
         // 搜索事件监听
-        searchInput.addEventListener('input', performSearch);
-        searchNextBtn.addEventListener('click', goToNextResult);
-        searchPrevBtn.addEventListener('click', goToPrevResult);
+        searchBtn.addEventListener('click', () => {
+            const searchTerm = searchInput.value.trim();
+            if (searchTerm) {
+                performSearch();
+            }
+        });
+        
+        searchNextBtn.addEventListener('click', () => {
+            if (searchResults.length > 0) {
+                goToNextResult();
+            } else {
+                const searchTerm = searchInput.value.trim();
+                if (searchTerm) {
+                    performSearch();
+                }
+            }
+        });
+        
+        searchPrevBtn.addEventListener('click', () => {
+            if (searchResults.length > 0) {
+                goToPrevResult();
+            } else {
+                const searchTerm = searchInput.value.trim();
+                if (searchTerm) {
+                    performSearch();
+                }
+            }
+        });
+        
         searchCaseBtn.addEventListener('click', toggleCaseSensitive);
         
         // 键盘快捷键
@@ -642,16 +673,22 @@
                 searchInput.select();
             }
             
-            // Enter 搜索下一个
+            // Enter 执行搜索
             if (e.key === 'Enter' && document.activeElement === searchInput) {
                 e.preventDefault();
-                goToNextResult();
+                const searchTerm = searchInput.value.trim();
+                if (searchTerm) {
+                    performSearch();
+                }
             }
             
-            // Shift+Enter 搜索上一个
+            // Shift+Enter 也执行搜索
             if (e.key === 'Enter' && e.shiftKey && document.activeElement === searchInput) {
                 e.preventDefault();
-                goToPrevResult();
+                const searchTerm = searchInput.value.trim();
+                if (searchTerm) {
+                    performSearch();
+                }
             }
         });
         

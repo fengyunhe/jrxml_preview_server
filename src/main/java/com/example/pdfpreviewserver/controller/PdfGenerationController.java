@@ -59,6 +59,13 @@ public class PdfGenerationController {
             headers.setContentDispositionFormData("inline", "report.pdf");
             headers.setContentLength(outputStream.size());
             
+            // 添加支持iframe嵌入的响应头
+            headers.add("X-Frame-Options", "SAMEORIGIN");
+            headers.add("Content-Security-Policy", "frame-ancestors *");
+            headers.add("Access-Control-Allow-Origin", "*");
+            headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+            headers.add("Access-Control-Allow-Headers", "*");
+            
             // 6. 返回PDF内容
             return new ResponseEntity<>(outputStream.toByteArray(), headers, HttpStatus.OK);
             

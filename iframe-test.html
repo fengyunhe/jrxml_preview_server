@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF预览嵌入测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .iframe-container {
+            width: 100%;
+            height: 800px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .description {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #e9f7fe;
+            border-left: 4px solid #3498db;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PDF预览嵌入测试</h1>
+        
+        <div class="description">
+            <p>这个页面演示了如何将PDF预览服务器嵌入到其他网页中。下方iframe中显示的是PDF预览服务器的界面。</p>
+            <p>您可以使用以下代码将PDF预览服务器嵌入到您的网页中：</p>
+            <pre><code>&lt;iframe src="http://localhost:8084" width="100%" height="800px" frameborder="0"&gt;&lt;/iframe&gt;</code></pre>
+        </div>
+        
+        <div class="iframe-container">
+            <iframe src="http://localhost:8084" title="PDF预览服务器"></iframe>
+        </div>
+    </div>
+</body>
+</html>
