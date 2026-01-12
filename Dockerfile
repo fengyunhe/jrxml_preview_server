@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:11-jre-slim
 
 RUN apt update && apt install -y --no-install-recommends fontconfig && rm -rf /var/lib/apt/lists/*
 
