@@ -1,4 +1,7 @@
 FROM openjdk:8-jdk-alpine
+
+RUN apt update && apt install -y --no-install-recommends fontconfig && rm -rf /var/lib/apt/lists/*
+
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} /usr/local/app.jar
 ENV JVM_OPTION="-Djava.awt.headless=true"
