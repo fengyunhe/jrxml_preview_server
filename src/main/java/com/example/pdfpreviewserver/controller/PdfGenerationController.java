@@ -23,6 +23,11 @@ import java.util.Map;
 @RequestMapping("/api/pdf")
 public class PdfGenerationController {
 
+    @PostMapping(value = "/generateForm")
+    public ResponseEntity<Object> generatePdfFromJrxmlForm(String jrxml) {
+        return this.generatePdfFromJrxml(jrxml);
+    }
+
     @PostMapping(value = "/generate")
     public ResponseEntity<Object> generatePdfFromJrxml(@RequestBody String jrxmlContent) {
         try {
