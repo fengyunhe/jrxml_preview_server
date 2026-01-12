@@ -61,7 +61,7 @@ public class PdfGenerationController {
             // 5. 设置响应头，确保PDF在浏览器中显示而不是下载
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("inline", "report.pdf");
+            headers.add("Content-Disposition", "inline; filename=report.pdf");
             headers.setContentLength(outputStream.size());
             
             // 添加支持iframe嵌入的响应头
