@@ -23,7 +23,7 @@ import java.util.Map;
 @RequestMapping("/api/pdf")
 public class PdfGenerationController {
 
-    @PostMapping(value = "/generate", consumes = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping(value = "/generate")
     public ResponseEntity<Object> generatePdfFromJrxml(@RequestBody String jrxmlContent) {
         try {
             // 1. 加载JRXML内容，确保使用UTF-8编码
