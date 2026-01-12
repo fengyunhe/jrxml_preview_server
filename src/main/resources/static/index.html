@@ -733,7 +733,7 @@
             updateStatus('正在生成PDF...', '');
             
             try {
-                const response = await fetch('http://localhost:8084/api/pdf/generate', {
+                const response = await fetch('/api/pdf/generate', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'text/plain'
