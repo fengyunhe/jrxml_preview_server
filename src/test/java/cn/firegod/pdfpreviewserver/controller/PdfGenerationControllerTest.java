@@ -116,4 +116,20 @@ public class PdfGenerationControllerTest {
         // 把输出的pdf放到当前目录下
 
     }
+    
+    @Test
+    public void testGeneratePdfFromJrxmlFormWithParamsAndDataSource() throws Exception {
+        // 测试generateForm端点传递报表参数和数据字段
+        String parametersJson = "{\"reportTitle\": \"表单测试标题\"}";
+        String dataSourceJson = "[{\"id\": 1, \"name\": \"表单测试项1\", \"value\": 123.45}, {\"id\": 2, \"name\": \"表单测试项2\", \"value\": 678.90}]";
+        
+        // 使用带reportTitle参数的JRXML模板
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/pdf/generateForm")
+                .param("jrxml", VALID_JRXML_WITH_PARAM)
+                .param("parameters", parametersJson)
+                .param("dataSource", dataSourceJson))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_PDF))
+                .andExpect(MockMvcResultMatchers.header().string("Content-Disposition", "inline; filename=report.pdf"));
+    }
 }

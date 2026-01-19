@@ -26,9 +26,43 @@ import java.util.Map;
 public class PdfGenerationController {
 
     @PostMapping(value = "/generateForm")
-    public ResponseEntity<Object> generatePdfFromJrxmlForm(String jrxml) {
+    public ResponseEntity<Object> generatePdfFromJrxmlForm(String jrxml, String parameters, String dataSource) {
         PdfGenerationRequest request = new PdfGenerationRequest();
         request.setJrxmlContent(jrxml);
+        
+        // 解析parameters参数
+        if (parameters != null && !parameters.isEmpty()) {
+            try {
+                org.json.JSONObject jsonObject = new org.json.JSONObject(parameters);
+                Map<String, Object> paramsMap = new HashMap<>();
+                for (String key : jsonObject.keySet()) {
+                    paramsMap.put(key, jsonObject.get(key));
+                }
+                request.setParameters(paramsMap);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+        // 解析dataSource参数
+        if (dataSource != null && !dataSource.isEmpty()) {
+            try {
+                org.json.JSONArray jsonArray = new org.json.JSONArray(dataSource);
+                List<Map<String, Object>> dataList = new java.util.ArrayList<>();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    org.json.JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    Map<String, Object> dataMap = new HashMap<>();
+                    for (String key : jsonObject.keySet()) {
+                        dataMap.put(key, jsonObject.get(key));
+                    }
+                    dataList.add(dataMap);
+                }
+                request.setDataSource(dataList);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
         return this.generatePdfFromJrxmlWithRequest(request);
     }
 
