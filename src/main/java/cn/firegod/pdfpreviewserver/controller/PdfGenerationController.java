@@ -1,4 +1,4 @@
-package com.example.pdfpreviewserver.controller;
+package cn.firegod.pdfpreviewserver.controller;
 
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.pdfpreviewserver.model.PdfGenerationRequest;
-import java.util.Locale;
+import cn.firegod.pdfpreviewserver.model.PdfGenerationRequest;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

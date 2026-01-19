@@ -1,4 +1,4 @@
-package com.example.pdfpreviewserver.controller;
+package cn.firegod.pdfpreviewserver.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

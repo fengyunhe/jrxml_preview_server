@@ -1,4 +1,4 @@
-package com.example.pdfpreviewserver.util;
+package cn.firegod.pdfpreviewserver.util;
 
 import java.io.BufferedReader;
 import java.io.File;

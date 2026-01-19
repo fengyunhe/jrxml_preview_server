@@ -1,4 +1,4 @@
-package com.example.pdfpreviewserver.config;
+package cn.firegod.pdfpreviewserver.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
