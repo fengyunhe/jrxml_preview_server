@@ -1,6 +1,7 @@
 package com.example.pdfpreviewserver.controller;
 
 import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import org.springframework.http.HttpHeaders;
@@ -12,11 +13,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.pdfpreviewserver.model.PdfGenerationRequest;
 import java.util.Locale;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -25,20 +28,33 @@ public class PdfGenerationController {
 
     @PostMapping(value = "/generateForm")
     public ResponseEntity<Object> generatePdfFromJrxmlForm(String jrxml) {
-        return this.generatePdfFromJrxml(jrxml);
+        PdfGenerationRequest request = new PdfGenerationRequest();
+        request.setJrxmlContent(jrxml);
+        return this.generatePdfFromJrxmlWithRequest(request);
     }
 
-    @PostMapping(value = "/generate")
+    @PostMapping(value = "/generate", consumes = "text/plain")
     public ResponseEntity<Object> generatePdfFromJrxml(@RequestBody String jrxmlContent) {
+        PdfGenerationRequest request = new PdfGenerationRequest();
+        request.setJrxmlContent(jrxmlContent);
+        return this.generatePdfFromJrxmlWithRequest(request);
+    }
+    
+    @PostMapping(value = "/generate", consumes = "application/json")
+    public ResponseEntity<Object> generatePdfFromJrxml(@RequestBody PdfGenerationRequest request) {
+        return this.generatePdfFromJrxmlWithRequest(request);
+    }
+    
+    private ResponseEntity<Object> generatePdfFromJrxmlWithRequest(PdfGenerationRequest request) {
         try {
             // 1. 加载JRXML内容，确保使用UTF-8编码
-            JasperDesign jasperDesign = JRXmlLoader.load(new ByteArrayInputStream(jrxmlContent.getBytes("UTF-8")));
+            JasperDesign jasperDesign = JRXmlLoader.load(new ByteArrayInputStream(request.getJrxmlContent().getBytes("UTF-8")));
             
             // 2. 编译JRXML为JasperReport
             JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
             
             // 3. 准备参数和数据源
-            Map<String, Object> parameters = new HashMap<>();
+            Map<String, Object> parameters = request.getParameters() != null ? request.getParameters() : new HashMap<>();
             
             // 设置字体映射，支持中文显示
             // parameters.put(JRParameter.REPORT_LOCALE, Locale.CHINA);
@@ -52,7 +68,16 @@ public class PdfGenerationController {
             // // 忽略缺失字体警告
             // parameters.put("net.sf.jasperreports.awt.ignore.missing.font", true);
             
-            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, new JREmptyDataSource());
+            // 准备数据源
+            JRDataSource dataSource;
+            List<Map<String, Object>> dataList = request.getDataSource();
+            if (dataList != null && !dataList.isEmpty()) {
+                dataSource = new JRBeanCollectionDataSource(dataList);
+            } else {
+                dataSource = new JREmptyDataSource();
+            }
+            
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
             
             // 4. 生成PDF
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
