@@ -1,211 +1,280 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PDF预览服务器测试工具</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        .input-section {
-            margin-bottom: 20px;
-        }
-        .editor-container {
-            display: flex;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: monospace;
-            height: 300px;
-        }
-        .line-numbers {
-            background-color: #f5f5f5;
-            color: #666;
-            padding: 10px 5px;
-            text-align: right;
-            border-right: 1px solid #ddd;
-            overflow-y: hidden;
-            overflow-x: hidden;
-            user-select: none;
-            min-width: 40px;
-            white-space: pre;
-            line-height: 22px;
-            font-family: monospace;
-        }
-        .code-editor {
-            flex-grow: 1;
-            padding: 10px;
-            height: 100%;
-        }
-        textarea {
-            width: 100%;
-            height: 100%;
-            border: none;
-            outline: none;
-            font-family: monospace;
-            resize: none;
-            padding: 0;
-            margin: 0;
-            line-height: 22px; /* 与行号区域保持一致 */
-            white-space: pre; /* 禁用自动换行，保留空白字符 */
-            overflow-x: auto; /* 启用水平滚动 */
-            overflow-y: auto; /* 启用垂直滚动 */
-            wrap: off; /* 禁用文本换行 */
-        }
-        .button-group {
-            margin-bottom: 20px;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-right: 10px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #download-btn {
-            background-color: #2196F3;
-        }
-        #download-btn:hover {
-            background-color: #0b7dda;
-        }
-        .result-section {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 10px;
-            min-height: 400px;
-        }
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            min-height: 500px;
-        }
-        .status {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #e9e9e9;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        .search-container {
-            display: flex;
-            margin-bottom: 10px;
-            align-items: center;
-        }
-        .search-input {
-            flex-grow: 1;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: Arial, sans-serif;
-            margin-right: 10px;
-        }
-        .search-buttons {
-            display: flex;
-        }
-        .search-btn {
-            padding: 8px 12px;
-            background-color: #f0f0f0;
-            color: #333;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-right: 5px;
-        }
-        .search-btn:hover {
-            background-color: #e0e0e0;
-        }
-        .search-btn.active {
-            background-color: #2196F3;
-            color: white;
-        }
-        .search-count {
-            font-size: 12px;
-            color: #666;
-            margin-left: 10px;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        max-width: 1300px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        gap: 20px;
+      }
+      .main-content {
+        flex: 1;
+      }
+      .donation-section {
+        width: 300px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 20px;
+        align-self: flex-start;
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+      }
+      .input-section {
+        margin-bottom: 20px;
+      }
+      .editor-container {
+        display: flex;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: monospace;
+        height: 300px;
+      }
+      .line-numbers {
+        background-color: #f5f5f5;
+        color: #666;
+        padding: 10px 5px;
+        text-align: right;
+        border-right: 1px solid #ddd;
+        overflow-y: hidden;
+        overflow-x: hidden;
+        user-select: none;
+        min-width: 40px;
+        white-space: pre;
+        line-height: 22px;
+        font-family: monospace;
+      }
+      .code-editor {
+        flex-grow: 1;
+        padding: 10px;
+        height: 100%;
+      }
+      textarea {
+        width: 100%;
+        height: 100%;
+        border: none;
+        outline: none;
+        font-family: monospace;
+        resize: none;
+        padding: 0;
+        margin: 0;
+        line-height: 22px; /* 与行号区域保持一致 */
+        white-space: pre; /* 禁用自动换行，保留空白字符 */
+        overflow-x: auto; /* 启用水平滚动 */
+        overflow-y: auto; /* 启用垂直滚动 */
+        wrap: off; /* 禁用文本换行 */
+      }
+      .button-group {
+        margin-bottom: 20px;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-right: 10px;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      #download-btn {
+        background-color: #2196f3;
+      }
+      #download-btn:hover {
+        background-color: #0b7dda;
+      }
+      .result-section {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px;
+        min-height: 400px;
+      }
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        min-height: 500px;
+      }
+      .status {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #e9e9e9;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      .success {
+        background-color: #d4edda;
+        color: #155724;
+      }
+      .error {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+      .search-container {
+        display: flex;
+        margin-bottom: 10px;
+        align-items: center;
+      }
+      .search-input {
+        flex-grow: 1;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: Arial, sans-serif;
+        margin-right: 10px;
+      }
+      .search-buttons {
+        display: flex;
+      }
+      .search-btn {
+        padding: 8px 12px;
+        background-color: #f0f0f0;
+        color: #333;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-right: 5px;
+      }
+      .search-btn:hover {
+        background-color: #e0e0e0;
+      }
+      .search-btn.active {
+        background-color: #2196f3;
+        color: white;
+      }
+      .search-count {
+        font-size: 12px;
+        color: #666;
+        margin-left: 10px;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
+      <div class="main-content">
         <h1>PDF预览服务器测试工具</h1>
-        
+
         <div class="input-section">
-            <h3>JRXML 内容</h3>
-            <div class="search-container">
-                <input type="text" id="search-input" class="search-input" placeholder="搜索内容...">
-                <div class="search-buttons">
-                    <button id="search-btn" class="search-btn">搜索</button>
-                    <button id="search-prev-btn" class="search-btn">上一个</button>
-                    <button id="search-next-btn" class="search-btn">下一个</button>
-                    <button id="search-case-btn" class="search-btn">Aa</button>
-                </div>
-                <div class="search-count" id="search-count"></div>
+          <h3>JRXML 内容</h3>
+          <div class="search-container">
+            <input
+              type="text"
+              id="search-input"
+              class="search-input"
+              placeholder="搜索内容..."
+            />
+            <div class="search-buttons">
+              <button id="search-btn" class="search-btn">搜索</button>
+              <button id="search-prev-btn" class="search-btn">上一个</button>
+              <button id="search-next-btn" class="search-btn">下一个</button>
+              <button id="search-case-btn" class="search-btn">Aa</button>
             </div>
-            <div class="editor-container">
-                <div class="line-numbers" id="line-numbers"></div>
-                <div class="code-editor">
-                    <textarea id="jrxml-content" placeholder="请粘贴JRXML内容..." spellcheck="false"></textarea>
-                </div>
+            <div class="search-count" id="search-count"></div>
+          </div>
+          <div class="editor-container">
+            <div class="line-numbers" id="line-numbers"></div>
+            <div class="code-editor">
+              <textarea
+                id="jrxml-content"
+                placeholder="请粘贴JRXML内容..."
+                spellcheck="false"
+              ></textarea>
             </div>
+          </div>
         </div>
-        
+
         <div class="input-section">
-            <h3>JSON 数据</h3>
-            <div class="editor-container">
-                <div class="line-numbers" id="json-line-numbers"></div>
-                <div class="code-editor">
-                    <textarea id="json-content" placeholder="请输入JSON数据..." spellcheck="false"></textarea>
-                </div>
+          <h3>JSON 数据</h3>
+          <div class="editor-container">
+            <div class="line-numbers" id="json-line-numbers"></div>
+            <div class="code-editor">
+              <textarea
+                id="json-content"
+                placeholder="请输入JSON数据..."
+                spellcheck="false"
+              ></textarea>
             </div>
+          </div>
         </div>
-        
+
         <div class="button-group">
-            <button id="load-sample-btn">加载示例JRXML</button>
-            <button id="generate-btn">生成PDF</button>
-            <button id="download-btn" disabled>下载PDF</button>
+          <button id="load-sample-btn">加载示例JRXML</button>
+          <button id="generate-btn">生成PDF</button>
+          <button id="download-btn" disabled>下载PDF</button>
         </div>
-        
+
         <div class="status" id="status">准备就绪</div>
-        
+
         <div class="result-section">
-            <h3>PDF预览</h3>
-            <iframe id="pdf-preview"></iframe>
+          <h3>PDF预览</h3>
+          <iframe id="pdf-preview"></iframe>
         </div>
+      </div>
+      
+      <!-- Donation Section -->
+      <div class="donation-section">
+        <!-- PayPal Donation Section -->
+        <h3>Support This Project</h3>
+        <div id="paypal-button-container-P-19G51974NJ968551RNFYXP3A"></div>
+        <script
+          src="https://www.paypal.com/sdk/js?client-id=AVZB1IzcDRiJe7LZ-fScuoAUwJvN0nEwx1s845snzslzGK-1oOMiNS37Urw76p_xyeNhKhAPQp_BBVNu&vault=true&intent=subscription"
+          data-sdk-integration-source="button-factory"
+        ></script>
+        <script>
+          paypal
+            .Buttons({
+              style: {
+                shape: "pill",
+                color: "silver",
+                layout: "horizontal",
+                label: "paypal",
+              },
+              createSubscription: function (data, actions) {
+                return actions.subscription.create({
+                  /* Creates the subscription */
+                  plan_id: "P-19G51974NJ968551RNFYXP3A",
+                });
+              },
+              onApprove: function (data, actions) {
+                alert(data.subscriptionID); // You can add optional success message for the subscriber here
+              },
+            })
+            .render("#paypal-button-container-P-19G51974NJ968551RNFYXP3A"); // Renders the PayPal button
+        </script>
+        
+        <!-- WeChat Donation Section -->
+        <div style="margin-top: 30px;">
+          <h3>Support via WeChat</h3>
+          <img src="http://localhost:5173/src/assets/FIREGOD_CN.jpg" alt="WeChat Donation QR Code" style="width: 200px; height: 200px; margin-top: 10px;" />
+          <p style="margin-top: 10px; font-size: 14px;">Scan with WeChat to support</p>
+        </div>
+      </div>
     </div>
-    
+
     <script>
-        const sampleJrxml = `<?xml version="1.0" encoding="UTF-8"?>
+      const sampleJrxml = `<?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 9.0.0.final using JasperReports Library version 6.21.0-4f56c4f36cd19e17675219a9ac4692d5f0f13b06  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TrafficJobNormal" pageWidth="606" pageHeight="396" orientation="Landscape" columnWidth="566" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c8b715cb-26fb-43dc-ae25-58d255c6099d">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
@@ -483,407 +552,426 @@
 		</band>
 	</detail>
 </jasperReport>`;
-        
 
-        
-        let pdfBlob = null;
-        
-        // 行号功能
-        const jrxmlContent = document.getElementById('jrxml-content');
-        const lineNumbers = document.getElementById('line-numbers');
-        const jsonContent = document.getElementById('json-content');
-        const jsonLineNumbers = document.getElementById('json-line-numbers');
-        
-        // 搜索功能
-        const searchInput = document.getElementById('search-input');
-        const searchBtn = document.getElementById('search-btn');
-        const searchPrevBtn = document.getElementById('search-prev-btn');
-        const searchNextBtn = document.getElementById('search-next-btn');
-        const searchCaseBtn = document.getElementById('search-case-btn');
-        const searchCount = document.getElementById('search-count');
-        
-        let searchResults = [];
-        let currentSearchIndex = -1;
-        let caseSensitive = false;
-        
-        // 搜索功能
-        function performSearch() {
-            const searchTerm = searchInput.value.trim();
-            
-            if (!searchTerm) {
-                clearSearch();
-                return;
-            }
-            
-            const content = jrxmlContent.value;
-            const searchFlags = caseSensitive ? 'g' : 'gi';
-            const regex = new RegExp(escapeRegExp(searchTerm), searchFlags);
-            
-            searchResults = [];
-            let match;
-            while ((match = regex.exec(content)) !== null) {
-                searchResults.push({
-                    start: match.index,
-                    end: match.index + match[0].length,
-                    text: match[0]
-                });
-            }
-            
-            updateSearchCount();
-            highlightSearchResults();
-            
-            if (searchResults.length > 0) {
-                currentSearchIndex = 0;
-                highlightCurrentResult();
-                scrollToCurrentResult();
-            } else {
-                currentSearchIndex = -1;
-            }
-        }
-        
-        function clearSearch() {
-            searchResults = [];
-            currentSearchIndex = -1;
-            updateSearchCount();
-            clearHighlights();
-        }
-        
-        function updateSearchCount() {
-            if (searchResults.length === 0) {
-                searchCount.textContent = '';
-            } else {
-                searchCount.textContent = `${currentSearchIndex + 1} / ${searchResults.length}`;
-            }
-        }
-        
-        function highlightSearchResults() {
-            clearHighlights();
-            
-            if (searchResults.length === 0) return;
-            
-            const content = jrxmlContent.value;
-            let highlightedContent = '';
-            let lastIndex = 0;
-            
-            searchResults.forEach((result, index) => {
-                highlightedContent += content.substring(lastIndex, result.start);
-                highlightedContent += `<mark data-search-index="${index}">${result.text}</mark>`;
-                lastIndex = result.end;
-            });
-            
-            highlightedContent += content.substring(lastIndex);
-            
-            // 创建一个临时的div来处理高亮
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = highlightedContent;
-            
-            // 由于textarea不支持HTML，我们需要使用其他方法
-            // 这里我们只更新搜索计数和当前结果位置
-        }
-        
-        function clearHighlights() {
-            // 由于textarea不支持HTML高亮，我们暂时不实现
-            // 在实际应用中，可能需要使用contenteditable div或其他方法
-        }
-        
-        function highlightCurrentResult() {
-            // 由于textarea不支持HTML高亮，我们暂时不实现
-            // 在实际应用中，可能需要使用contenteditable div或其他方法
-        }
-        
-        function scrollToCurrentResult() {
-            if (currentSearchIndex < 0 || currentSearchIndex >= searchResults.length) return;
-            
-            const result = searchResults[currentSearchIndex];
-            const content = jrxmlContent.value;
-            
-            // 计算行号
-            const textBeforeMatch = content.substring(0, result.start);
-            const lineNumber = textBeforeMatch.split('\n').length;
-            
-            // 计算字符位置在当前行中的偏移
-            const lines = textBeforeMatch.split('\n');
-            const charInLine = lines[lines.length - 1].length;
-            
-            // 获取textarea的行高
-            const lineHeight = 22; // 与CSS中的行高一致
-            
-            // 计算滚动位置
-            const scrollTop = (lineNumber - 1) * lineHeight;
-            jrxmlContent.scrollTop = scrollTop;
-            
-            // 设置光标位置
-            jrxmlContent.focus();
-            jrxmlContent.setSelectionRange(result.start, result.end);
-        }
-        
-        function goToNextResult() {
-            if (searchResults.length === 0) return;
-            
-            currentSearchIndex = (currentSearchIndex + 1) % searchResults.length;
-            updateSearchCount();
-            highlightCurrentResult();
-            scrollToCurrentResult();
-        }
-        
-        function goToPrevResult() {
-            if (searchResults.length === 0) return;
-            
-            currentSearchIndex = (currentSearchIndex - 1 + searchResults.length) % searchResults.length;
-            updateSearchCount();
-            highlightCurrentResult();
-            scrollToCurrentResult();
-        }
-        
-        function toggleCaseSensitive() {
-            caseSensitive = !caseSensitive;
-            searchCaseBtn.classList.toggle('active', caseSensitive);
-            // 不再自动执行搜索，需要用户手动点击搜索按钮
-        }
-        
-        function escapeRegExp(string) {
-            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        }
-        
-        // 搜索事件监听
-        searchBtn.addEventListener('click', () => {
-            const searchTerm = searchInput.value.trim();
-            if (searchTerm) {
-                performSearch();
-            }
-        });
-        
-        searchNextBtn.addEventListener('click', () => {
-            if (searchResults.length > 0) {
-                goToNextResult();
-            } else {
-                const searchTerm = searchInput.value.trim();
-                if (searchTerm) {
-                    performSearch();
-                }
-            }
-        });
-        
-        searchPrevBtn.addEventListener('click', () => {
-            if (searchResults.length > 0) {
-                goToPrevResult();
-            } else {
-                const searchTerm = searchInput.value.trim();
-                if (searchTerm) {
-                    performSearch();
-                }
-            }
-        });
-        
-        searchCaseBtn.addEventListener('click', toggleCaseSensitive);
-        
-        // 键盘快捷键
-        document.addEventListener('keydown', function(e) {
-            // Ctrl+F 或 F3 聚焦搜索框
-            if ((e.ctrlKey && e.key === 'f') || e.key === 'F3') {
-                e.preventDefault();
-                searchInput.focus();
-                searchInput.select();
-            }
-            
-            // Enter 执行搜索
-            if (e.key === 'Enter' && document.activeElement === searchInput) {
-                e.preventDefault();
-                const searchTerm = searchInput.value.trim();
-                if (searchTerm) {
-                    performSearch();
-                }
-            }
-            
-            // Shift+Enter 也执行搜索
-            if (e.key === 'Enter' && e.shiftKey && document.activeElement === searchInput) {
-                e.preventDefault();
-                const searchTerm = searchInput.value.trim();
-                if (searchTerm) {
-                    performSearch();
-                }
-            }
-        });
-        
+      let pdfBlob = null;
 
-        // 行号功能
-        function updateJrxmlLineNumbers() {
-            const lines = jrxmlContent.value.split('\n');
-            const lineCount = lines.length;
-            
-            let lineNumbersHtml = '';
-            for (let i = 1; i <= lineCount; i++) {
-                lineNumbersHtml += i + '\n';
-            }
-            
-            lineNumbers.textContent = lineNumbersHtml;
+      // 行号功能
+      const jrxmlContent = document.getElementById("jrxml-content");
+      const lineNumbers = document.getElementById("line-numbers");
+      const jsonContent = document.getElementById("json-content");
+      const jsonLineNumbers = document.getElementById("json-line-numbers");
+
+      // 搜索功能
+      const searchInput = document.getElementById("search-input");
+      const searchBtn = document.getElementById("search-btn");
+      const searchPrevBtn = document.getElementById("search-prev-btn");
+      const searchNextBtn = document.getElementById("search-next-btn");
+      const searchCaseBtn = document.getElementById("search-case-btn");
+      const searchCount = document.getElementById("search-count");
+
+      let searchResults = [];
+      let currentSearchIndex = -1;
+      let caseSensitive = false;
+
+      // 搜索功能
+      function performSearch() {
+        const searchTerm = searchInput.value.trim();
+
+        if (!searchTerm) {
+          clearSearch();
+          return;
         }
-        
-        function updateJsonLineNumbers() {
-            const lines = jsonContent.value.split('\n');
-            const lineCount = lines.length;
-            
-            let lineNumbersHtml = '';
-            for (let i = 1; i <= lineCount; i++) {
-                lineNumbersHtml += i + '\n';
-            }
-            
-            jsonLineNumbers.textContent = lineNumbersHtml;
+
+        const content = jrxmlContent.value;
+        const searchFlags = caseSensitive ? "g" : "gi";
+        const regex = new RegExp(escapeRegExp(searchTerm), searchFlags);
+
+        searchResults = [];
+        let match;
+        while ((match = regex.exec(content)) !== null) {
+          searchResults.push({
+            start: match.index,
+            end: match.index + match[0].length,
+            text: match[0],
+          });
         }
-        
-        // 初始化行号
-        updateJrxmlLineNumbers();
-        updateJsonLineNumbers();
-        
-        // 监听文本变化和滚动
-        jrxmlContent.addEventListener('input', updateJrxmlLineNumbers);
-        jrxmlContent.addEventListener('scroll', function() {
-            lineNumbers.scrollTop = jrxmlContent.scrollTop;
+
+        updateSearchCount();
+        highlightSearchResults();
+
+        if (searchResults.length > 0) {
+          currentSearchIndex = 0;
+          highlightCurrentResult();
+          scrollToCurrentResult();
+        } else {
+          currentSearchIndex = -1;
+        }
+      }
+
+      function clearSearch() {
+        searchResults = [];
+        currentSearchIndex = -1;
+        updateSearchCount();
+        clearHighlights();
+      }
+
+      function updateSearchCount() {
+        if (searchResults.length === 0) {
+          searchCount.textContent = "";
+        } else {
+          searchCount.textContent = `${currentSearchIndex + 1} / ${searchResults.length}`;
+        }
+      }
+
+      function highlightSearchResults() {
+        clearHighlights();
+
+        if (searchResults.length === 0) return;
+
+        const content = jrxmlContent.value;
+        let highlightedContent = "";
+        let lastIndex = 0;
+
+        searchResults.forEach((result, index) => {
+          highlightedContent += content.substring(lastIndex, result.start);
+          highlightedContent += `<mark data-search-index="${index}">${result.text}</mark>`;
+          lastIndex = result.end;
         });
-        
-        jsonContent.addEventListener('input', updateJsonLineNumbers);
-        jsonContent.addEventListener('scroll', function() {
-            jsonLineNumbers.scrollTop = jsonContent.scrollTop;
+
+        highlightedContent += content.substring(lastIndex);
+
+        // 创建一个临时的div来处理高亮
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = highlightedContent;
+
+        // 由于textarea不支持HTML，我们需要使用其他方法
+        // 这里我们只更新搜索计数和当前结果位置
+      }
+
+      function clearHighlights() {
+        // 由于textarea不支持HTML高亮，我们暂时不实现
+        // 在实际应用中，可能需要使用contenteditable div或其他方法
+      }
+
+      function highlightCurrentResult() {
+        // 由于textarea不支持HTML高亮，我们暂时不实现
+        // 在实际应用中，可能需要使用contenteditable div或其他方法
+      }
+
+      function scrollToCurrentResult() {
+        if (
+          currentSearchIndex < 0 ||
+          currentSearchIndex >= searchResults.length
+        )
+          return;
+
+        const result = searchResults[currentSearchIndex];
+        const content = jrxmlContent.value;
+
+        // 计算行号
+        const textBeforeMatch = content.substring(0, result.start);
+        const lineNumber = textBeforeMatch.split("\n").length;
+
+        // 计算字符位置在当前行中的偏移
+        const lines = textBeforeMatch.split("\n");
+        const charInLine = lines[lines.length - 1].length;
+
+        // 获取textarea的行高
+        const lineHeight = 22; // 与CSS中的行高一致
+
+        // 计算滚动位置
+        const scrollTop = (lineNumber - 1) * lineHeight;
+        jrxmlContent.scrollTop = scrollTop;
+
+        // 设置光标位置
+        jrxmlContent.focus();
+        jrxmlContent.setSelectionRange(result.start, result.end);
+      }
+
+      function goToNextResult() {
+        if (searchResults.length === 0) return;
+
+        currentSearchIndex = (currentSearchIndex + 1) % searchResults.length;
+        updateSearchCount();
+        highlightCurrentResult();
+        scrollToCurrentResult();
+      }
+
+      function goToPrevResult() {
+        if (searchResults.length === 0) return;
+
+        currentSearchIndex =
+          (currentSearchIndex - 1 + searchResults.length) %
+          searchResults.length;
+        updateSearchCount();
+        highlightCurrentResult();
+        scrollToCurrentResult();
+      }
+
+      function toggleCaseSensitive() {
+        caseSensitive = !caseSensitive;
+        searchCaseBtn.classList.toggle("active", caseSensitive);
+        // 不再自动执行搜索，需要用户手动点击搜索按钮
+      }
+
+      function escapeRegExp(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      }
+
+      // 搜索事件监听
+      searchBtn.addEventListener("click", () => {
+        const searchTerm = searchInput.value.trim();
+        if (searchTerm) {
+          performSearch();
+        }
+      });
+
+      searchNextBtn.addEventListener("click", () => {
+        if (searchResults.length > 0) {
+          goToNextResult();
+        } else {
+          const searchTerm = searchInput.value.trim();
+          if (searchTerm) {
+            performSearch();
+          }
+        }
+      });
+
+      searchPrevBtn.addEventListener("click", () => {
+        if (searchResults.length > 0) {
+          goToPrevResult();
+        } else {
+          const searchTerm = searchInput.value.trim();
+          if (searchTerm) {
+            performSearch();
+          }
+        }
+      });
+
+      searchCaseBtn.addEventListener("click", toggleCaseSensitive);
+
+      // 键盘快捷键
+      document.addEventListener("keydown", function (e) {
+        // Ctrl+F 或 F3 聚焦搜索框
+        if ((e.ctrlKey && e.key === "f") || e.key === "F3") {
+          e.preventDefault();
+          searchInput.focus();
+          searchInput.select();
+        }
+
+        // Enter 执行搜索
+        if (e.key === "Enter" && document.activeElement === searchInput) {
+          e.preventDefault();
+          const searchTerm = searchInput.value.trim();
+          if (searchTerm) {
+            performSearch();
+          }
+        }
+
+        // Shift+Enter 也执行搜索
+        if (
+          e.key === "Enter" &&
+          e.shiftKey &&
+          document.activeElement === searchInput
+        ) {
+          e.preventDefault();
+          const searchTerm = searchInput.value.trim();
+          if (searchTerm) {
+            performSearch();
+          }
+        }
+      });
+
+      // 行号功能
+      function updateJrxmlLineNumbers() {
+        const lines = jrxmlContent.value.split("\n");
+        const lineCount = lines.length;
+
+        let lineNumbersHtml = "";
+        for (let i = 1; i <= lineCount; i++) {
+          lineNumbersHtml += i + "\n";
+        }
+
+        lineNumbers.textContent = lineNumbersHtml;
+      }
+
+      function updateJsonLineNumbers() {
+        const lines = jsonContent.value.split("\n");
+        const lineCount = lines.length;
+
+        let lineNumbersHtml = "";
+        for (let i = 1; i <= lineCount; i++) {
+          lineNumbersHtml += i + "\n";
+        }
+
+        jsonLineNumbers.textContent = lineNumbersHtml;
+      }
+
+      // 初始化行号
+      updateJrxmlLineNumbers();
+      updateJsonLineNumbers();
+
+      // 监听文本变化和滚动
+      jrxmlContent.addEventListener("input", updateJrxmlLineNumbers);
+      jrxmlContent.addEventListener("scroll", function () {
+        lineNumbers.scrollTop = jrxmlContent.scrollTop;
+      });
+
+      jsonContent.addEventListener("input", updateJsonLineNumbers);
+      jsonContent.addEventListener("scroll", function () {
+        jsonLineNumbers.scrollTop = jsonContent.scrollTop;
+      });
+
+      document
+        .getElementById("load-sample-btn")
+        .addEventListener("click", () => {
+          jrxmlContent.value = sampleJrxml;
+          // 自动设置JSON数据，包含JRXML中的所有字段
+          const sampleJson = {
+            parameters: {
+              REPORT_TIME: "2024-01-20 10:00:00",
+              reportTitle: "示例交通报表",
+            },
+            dataSource: [
+              {
+                trafficNo: "TRA20240120001",
+                createTime: "2024-01-20 09:30:00",
+                proposeStartTime: "2024-01-21 08:00:00",
+                applyOrgName: "没问题",
+                applyUserName: "张三",
+                applyUserPhone: "13800138000",
+                fallbackContactUserName: "李四",
+                fallbackContactUserPhone: "13900139000",
+                reason: "商务出行",
+                fromPlace: "北京",
+                targetPlace: "上海",
+                applyRemark: "无",
+                vehiclePlateNo: "京A12345",
+                customNo: "CUST001",
+                passengerName: "王五",
+                passengerPhone: "13700137000",
+                driver1Name: "赵六",
+                driver1PhoneNumber: "13600136000",
+                driver2Name: "孙七",
+                driver2PhoneNumber: "13500135000",
+                pricePerKm: "1.5",
+                applyVehicleRemark: "无",
+              },
+            ],
+          };
+          jsonContent.value = JSON.stringify(sampleJson, null, 2);
+          updateStatus("已加载示例JRXML内容和JSON数据", "success");
+          updateJrxmlLineNumbers();
+          updateJsonLineNumbers();
+          clearSearch();
         });
-        
-        document.getElementById('load-sample-btn').addEventListener('click', () => {
-            jrxmlContent.value = sampleJrxml;
-            // 自动设置JSON数据，包含JRXML中的所有字段
-            const sampleJson = {
-                parameters: {
-                    REPORT_TIME: "2024-01-20 10:00:00",
-                    reportTitle: "示例交通报表"
-                },
-                dataSource: [{
-                    trafficNo: "TRA20240120001",
-                    createTime: "2024-01-20 09:30:00",
-                    proposeStartTime: "2024-01-21 08:00:00",
-                    applyOrgName: "没问题",
-                    applyUserName: "张三",
-                    applyUserPhone: "13800138000",
-                    fallbackContactUserName: "李四",
-                    fallbackContactUserPhone: "13900139000",
-                    reason: "商务出行",
-                    fromPlace: "北京",
-                    targetPlace: "上海",
-                    applyRemark: "无",
-                    vehiclePlateNo: "京A12345",
-                    customNo: "CUST001",
-                    passengerName: "王五",
-                    passengerPhone: "13700137000",
-                    driver1Name: "赵六",
-                    driver1PhoneNumber: "13600136000",
-                    driver2Name: "孙七",
-                    driver2PhoneNumber: "13500135000",
-                    pricePerKm: "1.5",
-                    applyVehicleRemark: "无"
-                }]
+
+      document
+        .getElementById("generate-btn")
+        .addEventListener("click", async () => {
+          const jrxmlContent = document
+            .getElementById("jrxml-content")
+            .value.trim();
+          const jsonContent = document
+            .getElementById("json-content")
+            .value.trim();
+
+          if (!jrxmlContent) {
+            updateStatus("请输入JRXML内容", "error");
+            return;
+          }
+
+          updateStatus("正在生成PDF...", "");
+
+          try {
+            let requestData = {
+              jrxmlContent: jrxmlContent,
             };
-            jsonContent.value = JSON.stringify(sampleJson, null, 2);
-            updateStatus('已加载示例JRXML内容和JSON数据', 'success');
-            updateJrxmlLineNumbers();
-            updateJsonLineNumbers();
-            clearSearch();
-        });
-        
-        document.getElementById('generate-btn').addEventListener('click', async () => {
-            const jrxmlContent = document.getElementById('jrxml-content').value.trim();
-            const jsonContent = document.getElementById('json-content').value.trim();
-            
-            if (!jrxmlContent) {
-                updateStatus('请输入JRXML内容', 'error');
-                return;
-            }
-            
-            updateStatus('正在生成PDF...', '');
-            
-            try {
-                let requestData = {
-                    jrxmlContent: jrxmlContent
-                };
-                
-                // 如果有JSON数据，解析并添加到请求中
-                if (jsonContent) {
-                    const jsonData = JSON.parse(jsonContent);
-                    
-                    // 检查JSON数据格式，支持直接是数据源数组或完整的请求对象
-                    if (Array.isArray(jsonData)) {
-                        // 如果是数组，直接作为dataSource
-                        requestData.dataSource = jsonData;
-                    } else if (typeof jsonData === 'object') {
-                        // 如果是对象，检查是否包含parameters或dataSource字段
-                        if (jsonData.parameters) {
-                            requestData.parameters = jsonData.parameters;
-                        }
-                        if (jsonData.dataSource) {
-                            requestData.dataSource = jsonData.dataSource;
-                        } else {
-                            // 如果没有dataSource字段，尝试将整个对象作为数据源的单个项
-                            requestData.dataSource = [jsonData];
-                        }
-                    }
+
+            // 如果有JSON数据，解析并添加到请求中
+            if (jsonContent) {
+              const jsonData = JSON.parse(jsonContent);
+
+              // 检查JSON数据格式，支持直接是数据源数组或完整的请求对象
+              if (Array.isArray(jsonData)) {
+                // 如果是数组，直接作为dataSource
+                requestData.dataSource = jsonData;
+              } else if (typeof jsonData === "object") {
+                // 如果是对象，检查是否包含parameters或dataSource字段
+                if (jsonData.parameters) {
+                  requestData.parameters = jsonData.parameters;
                 }
-                
-                const response = await fetch('/api/pdf/generate', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(requestData)
-                });
-                
-                if (response.ok) {
-                    // 成功生成PDF
-                    pdfBlob = await response.blob();
-                    const pdfUrl = URL.createObjectURL(pdfBlob);
-                    document.getElementById('pdf-preview').src = pdfUrl;
-                    document.getElementById('download-btn').disabled = false;
-                    updateStatus('PDF生成成功！', 'success');
+                if (jsonData.dataSource) {
+                  requestData.dataSource = jsonData.dataSource;
                 } else {
-                    // 检查响应类型是否为JSON
-                    const contentType = response.headers.get('content-type');
-                    if (contentType && contentType.includes('application/json')) {
-                        const errorData = await response.json();
-                        updateStatus(`生成失败: ${errorData.message || errorData.error}`, 'error');
-                    } else {
-                        const errorText = await response.text();
-                        updateStatus(`生成失败: ${errorText}`, 'error');
-                    }
-                    // 清空预览
-                    document.getElementById('pdf-preview').src = '';
-                    document.getElementById('download-btn').disabled = true;
+                  // 如果没有dataSource字段，尝试将整个对象作为数据源的单个项
+                  requestData.dataSource = [jsonData];
                 }
-                
-            } catch (error) {
-                updateStatus(`生成失败: ${error.message}`, 'error');
-                console.error('Error generating PDF:', error);
-                // 清空预览
-                document.getElementById('pdf-preview').src = '';
-                document.getElementById('download-btn').disabled = true;
+              }
             }
+
+            const response = await fetch("/api/pdf/generate", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(requestData),
+            });
+
+            if (response.ok) {
+              // 成功生成PDF
+              pdfBlob = await response.blob();
+              const pdfUrl = URL.createObjectURL(pdfBlob);
+              document.getElementById("pdf-preview").src = pdfUrl;
+              document.getElementById("download-btn").disabled = false;
+              updateStatus("PDF生成成功！", "success");
+            } else {
+              // 检查响应类型是否为JSON
+              const contentType = response.headers.get("content-type");
+              if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                updateStatus(
+                  `生成失败: ${errorData.message || errorData.error}`,
+                  "error",
+                );
+              } else {
+                const errorText = await response.text();
+                updateStatus(`生成失败: ${errorText}`, "error");
+              }
+              // 清空预览
+              document.getElementById("pdf-preview").src = "";
+              document.getElementById("download-btn").disabled = true;
+            }
+          } catch (error) {
+            updateStatus(`生成失败: ${error.message}`, "error");
+            console.error("Error generating PDF:", error);
+            // 清空预览
+            document.getElementById("pdf-preview").src = "";
+            document.getElementById("download-btn").disabled = true;
+          }
         });
-        
-        document.getElementById('download-btn').addEventListener('click', () => {
-            if (pdfBlob) {
-                const url = URL.createObjectURL(pdfBlob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'generated_report.pdf';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            }
-        });
-        
-        function updateStatus(message, type = '') {
-            const statusElement = document.getElementById('status');
-            statusElement.textContent = message;
-            statusElement.className = 'status';
-            if (type) {
-                statusElement.classList.add(type);
-            }
+
+      document.getElementById("download-btn").addEventListener("click", () => {
+        if (pdfBlob) {
+          const url = URL.createObjectURL(pdfBlob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "generated_report.pdf";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
         }
+      });
+
+      function updateStatus(message, type = "") {
+        const statusElement = document.getElementById("status");
+        statusElement.textContent = message;
+        statusElement.className = "status";
+        if (type) {
+          statusElement.classList.add(type);
+        }
+      }
     </script>
-</body>
+  </body>
 </html>
