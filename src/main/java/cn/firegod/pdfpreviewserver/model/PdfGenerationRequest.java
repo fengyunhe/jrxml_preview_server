@@ -7,6 +7,7 @@ public class PdfGenerationRequest {
     private String jrxmlContent;
     private Map<String, Object> parameters;
     private List<Map<String, Object>> dataSource;
+    private Map<String, List<Map<String, Object>>> subDataSources;
 
     public String getJrxmlContent() {
         return jrxmlContent;
@@ -30,5 +31,13 @@ public class PdfGenerationRequest {
 
     public void setDataSource(List<Map<String, Object>> dataSource) {
         this.dataSource = dataSource;
+    }
+
+    public Map<String, List<Map<String, Object>>> getSubDataSources() {
+        return subDataSources;
+    }
+
+    public void setSubDataSources(Map<String, List<Map<String, Object>>> subDataSources) {
+        this.subDataSources = subDataSources;
     }
 }

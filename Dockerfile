@@ -1,10 +1,12 @@
-FROM openjdk:11-jre-slim
+# Runtime stage
+FROM eclipse-temurin:11-jre
+WORKDIR /app
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends fontconfig && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN apt update && apt install -y --no-install-recommends fontconfig && rm -rf /var/lib/apt/lists/*
-
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} /usr/local/app.jar
-ENV JVM_OPTION="-Djava.awt.headless=true"
-ENV TZ=Asia/Shanghai JAVA_OPTS="-Duser.timezone=Asia/Shanghai -Djava.security.egd=file:/dev/urandom"
-EXPOSE 80
-ENTRYPOINT java ${JAVA_OPTS} ${JVM_OPTION} -jar /usr/local/app.jar
+COPY target/*.jar app.jar
+ENV JAVA_OPTS="-Djava.awt.headless=true -Duser.timezone=Asia/Shanghai -Djava.security.egd=file:/dev/urandom"
+ENV TZ=Asia/Shanghai
+EXPOSE 8084
+ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -jar /app/app.jar"]

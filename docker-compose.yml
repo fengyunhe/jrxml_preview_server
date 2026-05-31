@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  jrxml_preview_server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: krccr.ccs.tencentyun.com/firegod/jrxml_preview_server:latest
+    container_name: jrxml_preview_server
+    ports:
+      - "8084:8084"
+    volumes:
+      - ~/.m2:/root/.m2
+    environment:
+      - TZ=Asia/Shanghai
+      - JAVA_OPTS=-Djava.awt.headless=true -Duser.timezone=Asia/Shanghai
+    restart: unless-stopped
