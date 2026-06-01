@@ -2,7 +2,7 @@
 FROM eclipse-temurin:11-jre
 WORKDIR /app
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends fontconfig && \
+    apt-get install -y --no-install-recommends fontconfig fonts-noto-cjk && \
     rm -rf /var/lib/apt/lists/*
 
 COPY target/*.jar app.jar
